@@ -10,53 +10,91 @@ import streamlit as st
 from datetime import date
 from travel_agent import app
 
-st.set_page_config(page_title="AI Travel Concierge", page_icon="🌍")
+st.set_page_config(page_title="AI Travel Concierge", page_icon="🌍", layout="wide")
 
+# ---------- Helper: Weather Icons ----------
+def get_weather_icon(text):
+    text = text.lower()
+    if "rain" in text:
+        return "🌧️"
+    if "cloud" in text:
+        return "☁️"
+    if "clear" in text or "sun" in text:
+        return "☀️"
+    if "snow" in text:
+        return "❄️"
+    if "storm" in text:
+        return "⛈️"
+    return "🌤️"
+
+
+# ---------- Title ----------
 st.title("🌍 Dynamic Travel Concierge")
-st.write("Plan your trip with weather-aware AI")
+st.caption("AI-powered travel planning with weather intelligence")
 
-# --- User Inputs ---
-source = st.text_input("Source City", "Hyderabad")
-destination = st.text_input("Destination", "London")
-start_date = st.date_input("Start Date", date.today())
-days = st.slider("Number of Days", 1, 14, 5)
+st.divider()
 
-# --- Generate Button ---
-if st.button("Generate Itinerary"):
-    if not source or not destination:
-        st.warning("Please enter both source and destination.")
-    else:
-        with st.spinner("Planning your trip..."):
+# ---------- Inputs ----------
+col1, col2 = st.columns(2)
 
-            try:
-                result = app.invoke({
-                    "source": source,
-                    "destination": destination,
-                    "start_date": start_date,
-                    "days": days
-                })
+with col1:
+    source = st.text_input("Source City", "Hyderabad")
 
-                st.success("Trip Planned!")
+with col2:
+    destination = st.text_input("Destination", "London")
 
-                # 🗺️ Itinerary
-                st.subheader("🗺️ Itinerary")
+col3, col4 = st.columns(2)
 
-                # Render formatted itinerary
-                for line in result["itinerary"]:
-                    if line.lower().startswith("day"):
-                        st.markdown(f"### {line}")
-                    elif line.strip().startswith("-"):
-                        st.markdown(line)
-                    else:
-                        st.write(line)
+with col3:
+    start_date = st.date_input("Start Date", date.today())
 
-                # ✈️ Flights
+with col4:
+    days = st.slider("Trip Duration (days)", 1, 14, 5)
+
+st.divider()
+
+# ---------- Route Display ----------
+if source and destination:
+    st.markdown(
+        f"<h3 style='text-align:center'>{source.title()} ➜ ✈️ ➜ {destination.title()}</h3>",
+        unsafe_allow_html=True
+    )
+
+st.divider()
+
+# ---------- Generate Button ----------
+if st.button("✨ Generate Itinerary"):
+    with st.spinner("Planning your perfect trip..."):
+
+        try:
+            result = app.invoke({
+                "source": source,
+                "destination": destination,
+                "start_date": start_date,
+                "days": days
+            })
+
+            st.success("Trip Planned Successfully!")
+
+            # ---------- Itinerary ----------
+            st.subheader("🗺️ Your Itinerary")
+
+            for item in result["itinerary"]:
+                icon = get_weather_icon(item)
+                st.markdown(f"{icon} {item}")
+
+            st.divider()
+
+            # ---------- Flights & Hotels ----------
+            colA, colB = st.columns(2)
+
+            with colA:
                 st.subheader("✈️ Recommended Flights")
-                st.info(result.get("flights", "No flight data"))
+                st.info(result.get("flights", "No flight data available"))
 
-                # 🏨 Hotels
+            with colB:
                 st.subheader("🏨 Recommended Hotels")
-                st.success(result.get("hotels", "No hotel data"))
+                st.success(result.get("hotels", "No hotel data available"))
 
-            except Exception as e:
-                st.error(f"Error planning trip: {e}")
+        except Exception as e:
+            st.error(f"Error planning trip: {e}")
