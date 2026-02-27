@@ -356,7 +356,7 @@ def adjust_node(state: TravelState) -> TravelState:
         else:
             final_text = activity_text
 
-        updated_itinerary.append(f"Day {day_index+1}: {label}: {final_text}")
+        updated_itinerary.append(f"Day {day_index+1}: {final_text}")
 
     state["itinerary"] = updated_itinerary
     return state
