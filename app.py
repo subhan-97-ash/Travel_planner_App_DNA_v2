@@ -32,7 +32,7 @@ def get_weather_icon(text):
 # ---------- Centered Header Title ----------
 st.markdown(
     """
-    <h1 style='text-align:center;'>✈️AI Travel Concierge</h1>
+    <h1 style='text-align:center;'>🌍AI Travel Concierge🌍</h1>
     <p style='text-align:center; color:gray;'>
     Tell us where to go — we’ll handle the itinerary with real-time weather insights and curated travel recommendations    </p>
     """,
