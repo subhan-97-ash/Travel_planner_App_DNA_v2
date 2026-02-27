@@ -56,9 +56,13 @@ st.divider()
 # ---------- Route Display ----------
 if source and destination:
     st.markdown(
-        f"<h3 style='text-align:center'>{source.title()} ➜ ✈️ ➜ {destination.title()}</h3>",
-        unsafe_allow_html=True
-    )
+    f"""
+    <div style="text-align:center; font-size:22px; font-weight:600;">
+        {source.title()} ✈️ {destination.title()}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 st.divider()
 
@@ -81,7 +85,18 @@ if st.button("✨ Generate Itinerary"):
 
             for item in result["itinerary"]:
                 icon = get_weather_icon(item)
-                st.markdown(f"{icon} {item}")
+                st.markdown(
+        f"""
+        <div style="
+            padding:12px;
+            border-radius:8px;
+            margin-bottom:8px;
+            background-color:#f5f7fb;">
+            {icon} {item}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
             st.divider()
 
