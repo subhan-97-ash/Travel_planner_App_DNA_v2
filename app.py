@@ -10,7 +10,8 @@ import streamlit as st
 from datetime import date
 from travel_agent import app
 
-st.set_page_config(page_title="AI Travel Concierge", page_icon="🌍", layout="wide")
+st.set_page_config(page_title="AI Travel Planner", page_icon="🌍", layout="wide")
+
 
 # ---------- Helper: Weather Icons ----------
 def get_weather_icon(text):
@@ -28,9 +29,15 @@ def get_weather_icon(text):
     return "🌤️"
 
 
-# ---------- Title ----------
-st.title("🌍 Dynamic Travel Concierge")
-st.caption("AI-powered travel planning with weather intelligence")
+# ---------- Centered Header Title ----------
+st.markdown(
+    """
+    <h1 style='text-align:center;'>✈️AI Travel Concierge</h1>
+    <p style='text-align:center; color:gray;'>
+    Tell us where to go — we’ll handle the itinerary with real-time weather insights and curated travel recommendations    </p>
+    """,
+    unsafe_allow_html=True
+)
 
 st.divider()
 
