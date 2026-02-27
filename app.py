@@ -9,14 +9,8 @@ Original file is located at
 import streamlit as st
 from datetime import date
 from travel_agent import app
-from geopy.geocoders import Nominatim
 
-# ---------- Page Config ----------
-st.set_page_config(
-    page_title="AI Travel Concierge",
-    page_icon="🌍",
-    layout="wide"
-)
+st.set_page_config(page_title="AI Travel Concierge", page_icon="🌍", layout="wide")
 
 # ---------- Helper: Weather Icons ----------
 def get_weather_icon(text):
@@ -33,29 +27,6 @@ def get_weather_icon(text):
         return "⛈️"
     return "🌤️"
 
-# ---------- Helper: Clean itinerary text ----------
-def clean_itinerary_line(line: str):
-    """
-    Removes weather text like 'Clear:' or 'Clouds:' from itinerary lines.
-    Example:
-    'Day 1: Clear: - Explore Goa' → 'Day 1: - Explore Goa'
-    """
-    parts = line.split(":", 2)
-
-    if len(parts) == 3:
-        day_part = parts[0]
-        activities = parts[2].strip()
-        return f"{day_part}: {activities}"
-
-    return line
-
-# ---------- Helper: Get Coordinates ----------
-def get_coordinates(city):
-    geolocator = Nominatim(user_agent="travel_app")
-    location = geolocator.geocode(city)
-    if location:
-        return location.latitude, location.longitude
-    return None, None
 
 # ---------- Title ----------
 st.title("🌍 Dynamic Travel Concierge")
@@ -70,7 +41,7 @@ with col1:
     source = st.text_input("Source City", "Hyderabad")
 
 with col2:
-    destination = st.text_input("Destination", "Goa")
+    destination = st.text_input("Destination", "London")
 
 col3, col4 = st.columns(2)
 
@@ -89,50 +60,41 @@ if source and destination:
         unsafe_allow_html=True
     )
 
-    # ---------- Map View ----------
-    lat, lon = get_coordinates(destination)
-    if lat and lon:
-        st.map({"lat": [lat], "lon": [lon]})
-
 st.divider()
 
 # ---------- Generate Button ----------
 if st.button("✨ Generate Itinerary"):
-    if not source or not destination:
-        st.warning("Please enter both source and destination.")
-    else:
-        with st.spinner("Planning your perfect trip..."):
+    with st.spinner("Planning your perfect trip..."):
 
-            try:
-                result = app.invoke({
-                    "source": source,
-                    "destination": destination,
-                    "start_date": start_date,
-                    "days": days
-                })
+        try:
+            result = app.invoke({
+                "source": source,
+                "destination": destination,
+                "start_date": start_date,
+                "days": days
+            })
 
-                st.success("Trip Planned Successfully!")
+            st.success("Trip Planned Successfully!")
 
-                # ---------- Itinerary ----------
-                st.subheader("🗺️ Your Itinerary")
+            # ---------- Itinerary ----------
+            st.subheader("🗺️ Your Itinerary")
 
-                for item in result["itinerary"]:
-                    icon = get_weather_icon(item)
-                    clean_line = clean_itinerary_line(item)
-                    st.markdown(f"### {icon} {clean_line}")
+            for item in result["itinerary"]:
+                icon = get_weather_icon(item)
+                st.markdown(f"{icon} {item}")
 
-                st.divider()
+            st.divider()
 
-                # ---------- Flights & Hotels ----------
-                colA, colB = st.columns(2)
+            # ---------- Flights & Hotels ----------
+            colA, colB = st.columns(2)
 
-                with colA:
-                    st.subheader("✈️ Recommended Flights")
-                    st.info(result.get("flights", "No flight data available"))
+            with colA:
+                st.subheader("✈️ Recommended Flights")
+                st.info(result.get("flights", "No flight data available"))
 
-                with colB:
-                    st.subheader("🏨 Recommended Hotels")
-                    st.success(result.get("hotels", "No hotel data available"))
+            with colB:
+                st.subheader("🏨 Recommended Hotels")
+                st.success(result.get("hotels", "No hotel data available"))
 
-            except Exception as e:
-                st.error(f"Error planning trip: {e}")
+        except Exception as e:
+            st.error(f"Error planning trip: {e}")
