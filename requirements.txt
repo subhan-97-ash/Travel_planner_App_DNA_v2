@@ -6,4 +6,5 @@ langgraph
 faiss-cpu
 amadeus
 requests
-geopy
+
+
