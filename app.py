@@ -41,7 +41,7 @@ with col1:
     source = st.text_input("Source City", "Hyderabad")
 
 with col2:
-    destination = st.text_input("Destination", "London")
+    destination = st.text_input("Destination", "Goa")
 
 col3, col4 = st.columns(2)
 
@@ -49,7 +49,7 @@ with col3:
     start_date = st.date_input("Start Date", date.today())
 
 with col4:
-    days = st.slider("Trip Duration (days)", 1, 14, 5)
+    days = st.slider("Trip Duration (days)", 1, 14, 3)
 
 st.divider()
 
@@ -68,7 +68,7 @@ st.divider()
 
 # ---------- Generate Button ----------
 if st.button("✨ Generate Itinerary"):
-    with st.spinner("Planning your perfect trip..."):
+    with st.spinner("Planning your perfect trip for memorable experiences..."):
 
         try:
             result = app.invoke({
